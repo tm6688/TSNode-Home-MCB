@@ -40,7 +40,7 @@ export class SmartHomeHelper {
       const { current, voltage } = params;
       if ((current || 0) == 0) return;
 
-      const logData = new LogData(current, voltage);
+      const logData = new LogData(current, voltage, true);
       await this._record(logData);
     });
   }
@@ -61,7 +61,7 @@ export class SmartHomeHelper {
 
       const logData = new LogData(current, voltage);
       await this._record(logData);
-    }, 1000 * 5);
+    }, 1000 * this.interval);
   }
 
   _record(data: LogData) {
