@@ -43,6 +43,10 @@ export class SmartHomeHelper {
       const logData = new LogData(current, voltage, true);
       await this._record(logData);
     });
+
+    this.socket.on("error", (error: any) => {
+      console.log(`Err:${error}`);
+    });
   }
 
   async start(): Promise<void> {
