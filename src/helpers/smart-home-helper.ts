@@ -44,9 +44,9 @@ export class SmartHomeHelper {
       await this._record(logData);
     });
 
-    this.socket.on("error", (error: any) => {
+    this.socket.onError = (error: any) => {
       console.log(`Err:${error}`);
-    });
+    };
   }
 
   async start(): Promise<void> {
