@@ -16,24 +16,19 @@ export class DbHelper {
     });
   }
 
-  async log(data: LogData): Promise<void> {
+  async log(data: LogData, retry: number = 0): Promise<void> {
     try {
-      if (await this.isConnectionAlive() == false) {
-        await this.initAsync();
-      }
       const sql = `INSERT INTO mcb_logs (current, voltage) VALUES (${data.current}, ${data.voltage})`;
       await this.connection.execute(sql);
     } catch (error) {
       console.log(error);
-    }
-  }
-
-  async isConnectionAlive(): Promise<boolean> {
-    try {
-      await this.connection.ping();
-      return true;
-    } catch (error) {
-      return false;
+      if (retry < 3) {
+        console.log('Reconnecting to database')
+        await this.initAsync();
+        await this.log(data, retry + 1);
+      } else {
+        console.log('Failed to log to database')
+      }
     }
   }
 }
