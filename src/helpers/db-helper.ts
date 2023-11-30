@@ -17,11 +17,15 @@ export class DbHelper {
   }
 
   async log(data: LogData): Promise<void> {
-    if (await this.isConnectionAlive() == false) {
-      await this.initAsync();
+    try {
+      if (await this.isConnectionAlive() == false) {
+        await this.initAsync();
+      }
+      const sql = `INSERT INTO mcb_logs (current, voltage) VALUES (${data.current}, ${data.voltage})`;
+      await this.connection.execute(sql);
+    } catch (error) {
+      console.log(error);
     }
-    const sql = `INSERT INTO mcb_logs (current, voltage) VALUES (${data.current}, ${data.voltage})`;
-    await this.connection.execute(sql);
   }
 
   async isConnectionAlive(): Promise<boolean> {
