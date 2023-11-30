@@ -17,7 +17,19 @@ export class DbHelper {
   }
 
   async log(data: LogData): Promise<void> {
+    if (await this.isConnectionAlive() == false) {
+      await this.initAsync();
+    }
     const sql = `INSERT INTO mcb_logs (current, voltage) VALUES (${data.current}, ${data.voltage})`;
     await this.connection.execute(sql);
+  }
+
+  async isConnectionAlive(): Promise<boolean> {
+    try {
+      await this.connection.ping();
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
